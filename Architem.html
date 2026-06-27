@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Architem - Falegnameria su misura</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, sans-serif;
+}
+
+body{
+    background: #f3f0ea;
+    color:#2b2b2b;
+}
+
+/* NAV */
+nav{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:15px 25px;
+    background:#ffffffcc;
+    backdrop-filter: blur(10px);
+    position:sticky;
+    top:0;
+    border-bottom:1px solid #ddd;
+    z-index: 100;
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+}
+
+nav a{
+    margin-left:15px;
+    text-decoration:none;
+    color:#333;
+    font-weight:bold;
+}
+
+nav a:hover{
+    color:#5a3b24;
+}
+
+/* HERO */
+.hero{
+    height:85vh;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+
+    background:
+    linear-gradient(rgba(255,255,255,0.7), rgba(255,255,255,0.7)),
+    url('https://images.unsplash.com/photo-1501004318641-b39e6451bec6');
+
+    background-size:cover;
+    background-position:center;
+}
+
+.hero h2{
+    font-size:42px;
+    color:#3a2a1f;
+}
+
+.hero p{
+    margin-top:10px;
+    color:#555;
+}
+
+.btn{
+    margin-top:20px;
+    padding:12px 25px;
+    background:#5a3b24;
+    color:white;
+    border-radius:30px;
+    text-decoration:none;
+    font-weight:bold;
+    transition:0.3s;
+    border: none;
+    cursor: pointer;
+}
+
+.btn:hover{
+    transform:scale(1.05);
+}
+
+/* SEZIONI */
+section{
+    padding:70px 20px;
+    text-align:center;
+}
+
+/* CARDS */
+.cards{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:20px;
+}
+
+.card{
+    background:white;
+    width:250px;
+    padding:20px;
+    border-radius:15px;
+    box-shadow:0 5px 15px rgba(0,0,0,0.08);
+    text-align: left;
+}
+
+/* FORM */
+input, textarea, select{
+    width:90%;
+    max-width:400px;
+    padding:10px;
+    margin:8px;
+    border-radius:8px;
+    border:1px solid #ccc;
+}
+
+/* FOOTER */
+footer{
+    background:#2b1c14;
+    color:#ccc;
+    text-align:center;
+    padding:20px;
+    margin-top:30px;
+}
+
+/* RECENSIONI */
+.review{
+    font-style:italic;
+    color:#555;
+}
+
+.reply-box {
+    margin-top: 10px;
+    padding: 8px;
+    background: #f9f6f0;
+    border-left: 3px solid #5a3b24;
+    font-size: 13px;
+    font-style: normal;
+    color: #333;
+}
+
+/* ⭐ MEDIA */
+#avgBox{
+    margin-bottom:15px;
+    color:#5a3b24;
+    font-weight:bold;
+    text-align: center;
+}
+
+/* 🔐 ADMIN */
+#adminPanel{
+    background:#fff;
+    margin:20px;
+    padding:20px;
+    border-radius:15px;
+    box-shadow:0 5px 15px rgba(0,0,0,0.1);
+}
+
+.admin-card {
+    background: #fdfdfd;
+    border: 1px solid #eaeaea;
+}
+
+.admin-actions {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.admin-status-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-status {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    flex: 1;
+    text-align: center;
+}
+
+.btn-accept { background: #e6f4ea; color: #137333; }
+.btn-reject { background: #fce8e6; color: #c5221f; }
+.btn-delete { background: #fee8e6; color: #b71c1c; flex: 1; }
+
+.btn-call { 
+    background: #e8f0fe; 
+    color: #1a73e8; 
+    text-decoration: none; 
+    display: block; 
+    text-align: center;
+    padding: 8px;
+    border-radius: 5px;
+    font-weight: bold;
+}
+</style>
+
+</head>
+
+<body>
+
+<nav>
+    <div class="logo-container">
+        <img src="architem.png" alt="Architem Logo" style="height: 45px; width: auto; display: block;">
+    </div>
+
+    <div>
+        <a href="#home">Home</a>
+        <a href="#chi">Chi siamo</a>
+        <a href="#lavori">Lavori</a>
+        <a href="#percorso">Come lavoriamo</a>
+        <a href="#recensioni">Recensioni</a>
+        <a href="#app">Appuntamenti</a>
+    </div>
+</nav>
+
+<div class="hero" id="home">
+    <h2>Falegnameria su misura</h2>
+    <p>Design artigianale in legno di qualità</p>
+    <a class="btn" href="#lavori">Vedi lavori</a>
+
+    <div style="margin-top:20px;display:flex;gap:15px;justify-content:center;flex-wrap:wrap;">
+        <div style="background:white;padding:10px 15px;border-radius:10px;">🪵 +120 lavori</div>
+        <div style="background:white;padding:10px 15px;border-radius:10px;">👥 +80 clienti</div>
+        <div style="background:white;padding:10px 15px;border-radius:10px;">⭐ qualità alta</div>
+    </div>
+</div>
+
+<section id="chi">
+    <h2>Chi siamo</h2>
+    <p style="max-width:600px;margin:auto;color:#555;text-align:center;">
+        Architem è una falegnameria artigianale specializzata nella creazione di mobili su misura.
+    </p>
+</section>
+
+<section id="lavori">
+    <h2>Lavori</h2>
+
+    <div class="cards">
+        <div class="card" style="text-align:center;">Cucine su misura</div>
+        <div class="card" style="text-align:center;">Armadi moderni</div>
+        <div class="card" style="text-align:center;">Porte in legno</div>
+        <div class="card" style="text-align:center;">Arredi completi</div>
+    </div>
+
+    <div class="cards" style="margin-top:20px;">
+        <div class="card" style="text-align:center;">📸 Cucina reale</div>
+        <div class="card" style="text-align:center;">📸 Armadio reale</div>
+        <div class="card" style="text-align:center;">📸 Porta reale</div>
+    </div>
+</section>
+
+<section id="percorso">
+    <h2>Come lavoriamo</h2>
+
+    <div class="cards">
+        <div class="card" style="text-align:center;">📞 Contatto iniziale</div>
+        <div class="card" style="text-align:center;">📐 Progettazione su misura</div>
+        <div class="card" style="text-align:center;">🪵 Realizzazione artigianale</div>
+        <div class="card" style="text-align:center;">🚚 Consegna e montaggio</div>
+    </div>
+</section>
+
+<section id="recensioni">
+    <h2>Recensioni clienti</h2>
+
+    <div id="avgBox">⭐ Media recensioni: <span id="avg">0</span>/5</div>
+    <div class="cards" id="reviewsContainer"></div>
+</section>
+
+<section>
+    <h2>Lascia una recensione</h2>
+
+    <input type="text" id="name" placeholder="Nome">
+    <br>
+
+    <textarea id="text" placeholder="Scrivi la recensione"></textarea>
+    <br>
+
+    <select id="stars">
+        <option value="5">⭐⭐⭐⭐⭐</option>
+        <option value="4">⭐⭐⭐⭐</option>
+        <option value="3">⭐⭐⭐</option>
+        <option value="2">⭐⭐</option>
+        <option value="1">⭐</option>
+    </select>
+
+    <br>
+
+    <button class="btn" onclick="addReview()">Invia recensione</button>
+</section>
+
+<section id="app">
+    <h2>Appuntamenti</h2>
+
+    <form id="appointmentForm">
+        <input type="text" id="appNome" placeholder="Nome" required>
+        <input type="tel" id="appTelefono" placeholder="Numero di Telefono" required>
+        <label style="display:block;margin-top:10px;font-weight:bold;font-size:14px;">Scegli Data e Ora:</label>
+        <input type="datetime-local" id="appDataOra" required>
+        <textarea id="appMessaggio" placeholder="Messaggio o dettagli richiesta" required></textarea>
+        <br>
+        <button class="btn" type="submit">Invia Richiesta</button>
+    </form>
+</section>
+
+<section id="adminPanel" style="display:none;">
+    <h2>Pannello Admin</h2>
+    
+    <h3 style="margin-top:30px;margin-bottom:10px;">Gestione Appuntamenti</h3>
+    <div id="adminContent" class="cards"></div>
+
+    <h3 style="margin-top:50px;margin-bottom:10px;">Rispondi alle Recensioni</h3>
+    <div id="adminReviewsContent" class="cards"></div>
+</section>
+
+<div style="text-align:center;margin:20px;">
+    <button class="btn" onclick="loginAdmin()">Login Admin</button>
+</div>
+
+<footer>
+    © 2026 Architem - Tutti i diritti riservati
+</footer>
+
+<script>
+const SUPABASE_URL = "https://zvhfeoxcqlumarxnslrx.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp2aGZlb3hjcWx1bWFyeG5zbHJ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI0OTU1MjEsImV4cCI6MjA5ODA3MTUyMX0.06ilzo91a4dLR6girGS_q0TgKkMXSntPfWgU8BVdFHI";
+
+const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// Carica e mostra le recensioni
+async function fetchAndRenderReviews(){
+    let container = document.getElementById("reviewsContainer");
+    container.innerHTML = "Caricamento recensioni...";
+
+    const { data: reviews, error } = await _supabase
+        .from('reviews')
+        .select('*');
+
+    if (error) {
+        console.error("Errore nel recupero delle recensioni:", error);
+        container.innerHTML = "Impossibile caricare le recensioni.";
+        return;
+    }
+
+    container.innerHTML = "";
+    let total = 0;
+
+    reviews.forEach(r => {
+        total += parseInt(r.stars);
+        let stars = "⭐".repeat(r.stars) + "☆".repeat(5 - r.stars);
+
+        let replyHtml = r.admin_reply ? `<div class="reply-box"><b>Risposta di Architem:</b><br>${r.admin_reply}</div>` : "";
+
+        let div = document.createElement("div");
+        div.className = "card review";
+        div.innerHTML = `
+            “${r.text}”<br>
+            ${stars}<br>
+            <strong>- ${r.name}</strong>
+            ${replyHtml}
+        `;
+        container.appendChild(div);
+    });
+
+    let avg = reviews.length ? (total / reviews.length).toFixed(1) : 0;
+    document.getElementById("avg").innerText = avg;
+}
+
+// Invia una nuova recensione
+async function addReview(){
+    let name = document.getElementById("name").value;
+    let text = document.getElementById("text").value;
+    let stars = parseInt(document.getElementById("stars").value);
+
+    if(!name || !text) {
+        alert("Compila tutti i campi della recensione");
+        return;
+    }
+
+    const { error } = await _supabase
+        .from('reviews')
+        .insert([{ name, text, stars }]);
+
+    if (error) {
+        alert("Errore durante l'invio della recensione");
+        console.error(error);
+    } else {
+        document.getElementById("name").value = "";
+        document.getElementById("text").value = "";
+        alert("Recensione inviata con successo!");
+        fetchAndRenderReviews();
+    }
+}
+
+// Gestione invio appuntamenti
+document.getElementById("appointmentForm").addEventListener("submit", async function(e){
+    e.preventDefault();
+
+    const dataOraScelta = new Date(document.getElementById("appDataOra").value).toLocaleString('it-IT', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+
+    const appointmentData = {
+        nome: document.getElementById("appNome").value,
+        email: document.getElementById("appTelefono").value, 
+        data: document.getElementById("appDataOra").value.split('T')[0], 
+        messaggio: `[Data/Ora Richiesta: ${dataOraScelta}] - ` + document.getElementById("appMessaggio").value,
+        status: "pending"
+    };
+
+    const { error } = await _supabase
+        .from('appointments')
+        .insert([appointmentData]);
+
+    if (error) {
+        alert("Errore durante l'invio dell'appuntamento");
+        console.error(error);
+    } else {
+        this.reset();
+        alert("Richiesta di appuntamento inviata con successo!");
+        if(document.getElementById("adminPanel").style.display === "block") {
+            renderAdminAppointments();
+        }
+    }
+});
+
+/* RENDERING APPUNTAMENTI ADMIN CON TASTO ELIMINA AUTOMATICO */
+async function renderAdminAppointments(){
+    let adminContent = document.getElementById("adminContent");
+    adminContent.innerHTML = "Caricamento appuntamenti...";
+
+    const { data: appointments, error } = await _supabase
+        .from('appointments')
+        .select('*');
+
+    if (error) {
+        adminContent.innerHTML = "Errore nel caricamento degli appuntamenti.";
+        return;
+    }
+
+    if(appointments.length === 0) {
+        adminContent.innerHTML = "<p>Nessun appuntamento registrato.</p>";
+        return;
+    }
+
+    adminContent.innerHTML = appointments.map(a => {
+        const currentStatus = a.status || 'pending';
+        let statusBadge = `🟡 In attesa`;
+        if(currentStatus === 'accepted') statusBadge = `🟢 Accettato`;
+        if(currentStatus === 'rejected') statusBadge = `🔴 Rifiutato`;
+
+        // Se lo stato è in attesa mostra i tasti Accetta/Rifiuta, altrimenti mostra direttamente il tasto Elimina
+        let actionButtonsHtml = "";
+        if(currentStatus === 'pending') {
+            actionButtonsHtml = `
+                <button class="btn-status btn-accept" onclick="updateStatus('${a.id}', 'accepted')">✔ Accetta</button>
+                <button class="btn-status btn-reject" onclick="updateStatus('${a.id}', 'rejected')">❌ Rifiuta</button>
+            `;
+        } else {
+            actionButtonsHtml = `
+                <button class="btn-status btn-delete" onclick="deleteAppointment('${a.id}')">🗑 Elimina Richiesta</button>
+            `;
+        }
+
+        return `
+            <div class='card admin-card'>
+                <strong>${a.nome}</strong><br>
+                📞 Tel: ${a.email}<br>
+                💬 Richiesta: ${a.messaggio}<br>
+                <span>Stato: <b>${statusBadge}</b></span><br><br>
+                <textarea id="msg-${a.id}" placeholder="Note interne o dettagli">${a.admin_message || ''}</textarea>
+                
+                <div class="admin-actions">
+                    <div class="admin-status-buttons">
+                        ${actionButtonsHtml}
+                    </div>
+                    <a href="tel:${a.email}" class="btn-call">📞 Chiama Cliente</a>
+                </div>
+            </div>
+        `;
+    }).join("");
+}
+
+/* RENDERING RECENSIONI NELL'ADMIN */
+async function renderAdminReviews(){
+    let adminReviewsContent = document.getElementById("adminReviewsContent");
+    adminReviewsContent.innerHTML = "Caricamento recensioni...";
+
+    const { data: reviews, error } = await _supabase
+        .from('reviews')
+        .select('*');
+
+    if (error) {
+        adminReviewsContent.innerHTML = "Errore nel caricamento delle recensioni.";
+        return;
+    }
+
+    if(reviews.length === 0) {
+        adminReviewsContent.innerHTML = "<p>Nessuna recensione presente.</p>";
+        return;
+    }
+
+    adminReviewsContent.innerHTML = reviews.map(r => {
+        return `
+            <div class='card admin-card'>
+                <strong>${r.name}</strong> (Stelle: ${r.stars}/5)<br>
+                💬 “${r.text}”<br><br>
+                <textarea id="reply-${r.id}" placeholder="Scrivi la risposta a questa recensione">${r.admin_reply || ''}</textarea>
+                <div class="admin-actions">
+                    <button class="btn-status btn-accept" onclick="submitReviewReply('${r.id}')">💾 Salva Risposta</button>
+                </div>
+            </div>
+        `;
+    }).join("");
+}
+
+/* SALVA LA RISPOSTA ALLA RECENSIONE */
+async function submitReviewReply(id){
+    let replyText = document.getElementById("reply-" + id).value;
+    const reviewId = parseInt(id);
+
+    const { error } = await _supabase
+        .from("reviews")
+        .update({ admin_reply: replyText })
+        .eq("id", reviewId);
+
+    if (error) {
+        alert("Errore durante il salvataggio: " + error.message);
+        return;
+    }
+
+    alert("Risposta salvata con successo!");
+    fetchAndRenderReviews();
+    renderAdminReviews();
+}
+
+/* AGGIORNA STATO SU DB */
+async function updateStatus(id, status){
+    let message = document.getElementById("msg-" + id).value;
+    const appointmentId = parseInt(id);
+
+    const { error: updateError } = await _supabase
+        .from("appointments")
+        .update({
+            status: status,
+            admin_message: message
+        })
+        .eq("id", appointmentId);
+
+    if (updateError) {
+        alert("Errore durante l'aggiornamento sul database: " + updateError.message);
+        return;
+    }
+
+    alert("Stato aggiornato! Ora puoi eliminare la richiesta o chiamare il cliente.");
+    renderAdminAppointments();
+}
+
+/* ELIMINA DEFINITIVAMENTE L'APPUNTAMENTO */
+async function deleteAppointment(id) {
+    if(!confirm("Vuoi davvero eliminare definitivamente questa richiesta di appuntamento?")) return;
+    
+    const appointmentId = parseInt(id);
+
+    const { error } = await _supabase
+        .from("appointments")
+        .delete()
+        .eq("id", appointmentId);
+
+    if (error) {
+        alert("Errore durante l'eliminazione: " + error.message);
+        return;
+    }
+
+    alert("Richiesta eliminata dal database!");
+    renderAdminAppointments();
+}
+
+/* LOGIN ADMIN */
+async function loginAdmin(){
+    let email = prompt("Email admin:");
+    let password = prompt("Password:");
+
+    if(
+        (email === "paolo.gulotta2317@gmail.com" || email === "architemsrls@libero.it") &&
+        password === "23012011"
+    ){
+        document.getElementById("adminPanel").style.display = "block";
+        renderAdminAppointments();
+        renderAdminReviews();
+        window.location.hash = "adminPanel";
+    } else {
+        alert("Accesso negato");
+    }
+}
+
+// Avvio iniziale
+fetchAndRenderReviews();
+</script>
+
+</body>
+</html>
+
+
